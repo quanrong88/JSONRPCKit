@@ -1,7 +1,6 @@
 # JSONRPCKit
 
 [![Build Status](https://app.bitrise.io/app/10a43958cc0e2fbe/status.svg?token=eMjuqBGB86tdtcbZjxh4BA&branch=master)](https://app.bitrise.io/app/10a43958cc0e2fbe)
-[![Build Status](https://travis-ci.org/ollitapa/JSONRPCKit.svg?branch=main)](https://travis-ci.org/ollitapa/JSONRPCKit)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![CocoaPods](https://img.shields.io/cocoapods/v/JSONRPCKit.svg)](https://cocoapods.org/)
 
