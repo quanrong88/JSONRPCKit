@@ -365,3 +365,5 @@ public struct Batch6<Request1: Request, Request2: Request, Request3: Request, Re
         try container.encode(batchElement6)
     }
 }
+
+//TODO: add Batch N
