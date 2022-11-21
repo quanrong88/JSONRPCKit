@@ -366,4 +366,49 @@ public struct Batch6<Request1: Request, Request2: Request, Request3: Request, Re
     }
 }
 
-//TODO: add Batch N
+public struct BatchN<Request: JSONRPCKit.Request>: Batch {
+  public typealias Responses = [Request.Response]
+
+  public typealias Results = [Result<Request.Response, JSONRPCError>]
+
+  public var batchElements: [BatchElement<Request>]
+
+  public var decoder: DecoderType = JSONDecoder() {
+      didSet {
+        batchElements.forEach { $0.decoder = decoder }
+      }
+  }
+  
+  public func responses(from data: Data) throws -> Responses {
+    var result: Responses = []
+    try batchElements.forEach {
+      let output = try $0.response(fromArray: data)
+      result.append(output)
+    }
+    return result
+  }
+  
+  public func results(from data: Data) -> Results {
+    var result: Results = []
+    batchElements.forEach {
+      let output = $0.result(from: data)
+      result.append(output)
+    }
+    return result
+  }
+  
+  public static func responses(from results: Results) throws -> Responses {
+    var result: Responses = []
+    try results.forEach {
+      let output = try $0.get()
+      result.append(output)
+    }
+    return result
+  }
+  
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.unkeyedContainer()
+    
+    try batchElements.forEach { try container.encode($0) }
+  }
+}

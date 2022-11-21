@@ -197,7 +197,7 @@ internal extension BatchElementProcotol where Request.Response == NoReply {
     }
 }
 
-public struct BatchElement<Request: JSONRPCKit.Request>: BatchElementProcotol {
+public class BatchElement<Request: JSONRPCKit.Request>: BatchElementProcotol {
     var decoder: DecoderType = JSONDecoder()
 
     public let request: Request

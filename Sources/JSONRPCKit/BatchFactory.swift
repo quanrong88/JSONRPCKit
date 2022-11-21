@@ -82,4 +82,18 @@ public final class BatchFactory {
 
         return Batch6(batchElement1: batchElement1, batchElement2: batchElement2, batchElement3: batchElement3, batchElement4: batchElement4, batchElement5: batchElement5, batchElement6: batchElement6)
     }
+  
+  public func createList<Request: JSONRPCKit.Request>(_ requests: [Request]) -> BatchN<Request> {
+    _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+    
+    var elements: [Any] = []
+    requests.forEach {
+      let batchElement = BatchElement(request: $0, version: version, id: idGenerator.next())
+      elements.append(batchElement)
+    }
+    
+    semaphore.signal()
+    return BatchN(batchElements: elements as! [BatchElement])
+    
+  }
 }
