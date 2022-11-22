@@ -205,4 +205,85 @@ class BatchFactoryTests: XCTestCase {
         ("test5Response", test5Response),
         ("testThreadSafety", testThreadSafety),
     ]
+  
+  func testBatchN() throws {
+    let request = TestRequest(method: "method", parameters: ["key": "value"])
+    let request2 = TestRequest(method: "method2", parameters: ["key2": "value2"])
+    let request3 = TestRequest(method: "method3", parameters: ["key3": "value3"])
+    let request4 = TestRequest(method: "method4", parameters: ["key4": "value4"])
+    let request5 = TestRequest(method: "method5", parameters: ["key5": "value5"])
+    let request6 = TestRequest(method: "method6", parameters: ["key6": "value6"])
+
+    let batch = batchFactory.createList([request, request2, request3, request5, request4, request6])
+    let encoder = JSONEncoder()
+    guard let data = try? encoder.encode(batch) else {
+        XCTFail()
+        return
+    }
+    let jsonString = String(data: data, encoding: .utf8)
+    print(jsonString)
+  }
+  
+  func testBatchNResponse() throws {
+    let request = TestRequest(method: "method", parameters: ["key": "value"])
+    let request2 = TestRequest(method: "method2", parameters: ["key2": "value2"])
+    let request3 = TestRequest(method: "method3", parameters: ["key3": "value3"])
+    let request4 = TestRequest(method: "method4", parameters: ["key4": "value4"])
+    let request5 = TestRequest(method: "method5", parameters: ["key5": "value5"])
+    let request6 = TestRequest(method: "method6", parameters: ["key6": "value6"])
+    let request7 = TestRequest(method: "method6", parameters: ["key6": "value7"])
+    let request8 = TestRequest(method: "method6", parameters: ["key6": "value8"])
+
+    let batch = batchFactory.createList([request, request2, request3, request5, request4, request6, request7, request8])
+    
+    let responseArray =
+    """
+    [
+        {
+            "id": 2,
+            "jsonrpc": "2.0",
+            "result": 2,
+        },
+        {
+            "id": 3,
+            "jsonrpc": "2.0",
+            "result": 3,
+        },
+        {
+            "id": 1,
+            "jsonrpc": "2.0",
+            "result": 1,
+        },
+        {
+            "id": 5,
+            "jsonrpc": "2.0",
+            "result": 5,
+        },
+        {
+            "id": 4,
+            "jsonrpc": "2.0",
+            "result": 4,
+        },
+                {
+                    "id": 6,
+                    "jsonrpc": "2.0",
+                    "result": 8,
+                },
+                    {
+                        "id": 7,
+                        "jsonrpc": "2.0",
+                        "result": 9,
+                    },
+                    {
+                        "id": 8,
+                        "jsonrpc": "2.0",
+                        "result": 10,
+                    }
+    ]
+    """
+    
+    let responses = try? batch.responses(from: responseArray.data(using: .utf8)!)
+    XCTAssertEqual(responses?[5], 8)
+    XCTAssertEqual(responses?[6], 9)
+  }
 }
